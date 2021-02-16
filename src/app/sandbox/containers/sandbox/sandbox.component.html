@@ -1,16 +1,32 @@
 <div class="flex">
-    <p>code goes here</p>
+
 </div>
 
 <div>
     <div #Source class="button">Call next on source</div>
     <div (click)="resetAll()" class="button">Reset all</div>
     <div class="results">
-        <div *ngFor="let operatorObject of operatorObjects" class="results-column">
-            <h2>{{operatorObject.name}}</h2>
-            <div *ngFor="let inner of operatorObject.innerObservables; let innerIndex = index"
-                [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted && !inner.hasActiveSubcription}">Inner observable ({{innerIndex + 1}}): <span>{{inner.value}}</span></div>
-            <div>Outer observable: {{operatorObject.result | async}}</div>
+        <div *ngFor="let operatorObject of operatorObjects" class="results-card">
+            <h2>{{ operatorObject.name }}</h2>
+            <pre>
+                <code>
+                    {{ operatorObject.code }}
+                </code>
+            </pre>
+            <div class="observable-values">
+                <div class="inner-observables">
+                    <p class="sub-header">Inner Values:</p>
+                    <div *ngFor="let inner of operatorObject.innerObservables"
+                        [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted && !inner.hasActiveSubcription}"
+                        class="inner-observable">
+                        Inner observable: <span>{{inner.value}}</span>
+                    </div>
+                </div>
+                <div class="result-observable">
+                    <p class="sub-header">Result Value:</p>
+                    <div class="result"><span>{{ operatorObject.result | async }}</span></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

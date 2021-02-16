@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { EMPTY, fromEvent, interval, Observable, of } from 'rxjs';
-import { concatMap, exhaustMap, finalize, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { concatMap, exhaustMap, finalize, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 
 enum Operators {
   None = 'No operator selected',
@@ -22,6 +22,7 @@ interface OperatorObj {
   innerObservables: InnerObservable[];
   result: Observable<number>;
   operator: Function;
+  code: string;
 }
 
 @Component({
@@ -39,25 +40,61 @@ export class SandboxComponent implements OnInit{
       name: Operators.MergeMap,
       innerObservables: [],
       operator: mergeMap,
-      result: of(0)
+      result: of(0),
+      code: `
+resultObservable$ = outerObservable.pipe(
+  mergeMap(() => innerObservable$.pipe(
+    map((innerObservableValue) => {
+      return innerObservableValue * 10;
+    })
+  ))
+).subscribe();
+      `
     },
     {
       name: Operators.ConcatMap,
       innerObservables: [],
       operator: concatMap,
-      result: of(0)
+      result: of(0),
+      code: `
+resultObservable$ = outerObservable.pipe(
+  concatMap(() => innerObservable$.pipe(
+    map((innerObservableValue) => {
+      return innerObservableValue * 10;
+    })
+  ))
+).subscribe();
+      `
     },
     {
       name: Operators.SwitchMap,
       innerObservables: [],
       operator: switchMap,
-      result: of(0)
+      result: of(0),
+      code: `
+resultObservable$ = outerObservable.pipe(
+  switchMap(() => innerObservable$.pipe(
+    map((innerObservableValue) => {
+      return innerObservableValue * 10;
+    })
+  ))
+).subscribe();
+      `
     },
     {
       name: Operators.ExhaustMap,
       innerObservables: [],
       operator: exhaustMap,
-      result: of(0)
+      result: of(0),
+      code: `
+resultObservable$ = outerObservable.pipe(
+  exhuastMap(() => innerObservable$.pipe(
+    map((innerObservableValue) => {
+      return innerObservableValue * 10;
+    })
+  ))
+).subscribe();
+      `
     }
   ]
 
@@ -94,7 +131,7 @@ export class SandboxComponent implements OnInit{
         const innerObservables = operatorObj.innerObservables;
         const observableIndex = innerObservables.length - 1;
 
-        return innerObservables[observableIndex].obs
+        return innerObservables[observableIndex].obs.pipe(map(number => number * 10));
       })
     )
   }
