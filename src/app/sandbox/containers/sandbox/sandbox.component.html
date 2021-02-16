@@ -9,7 +9,8 @@
     <div class="results">
         <div *ngFor="let operatorObject of operatorObjects" class="results-column">
             <h2>{{operatorObject.name}}</h2>
-            <div *ngFor="let inner of operatorObject.innerObservables">Inner: <span>{{inner.value}}</span></div>
+            <div *ngFor="let inner of operatorObject.innerObservables; let innerIndex = index"
+                [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted}">Inner {{innerIndex + 1}}: <span>{{inner.value}}</span></div>
             <div>Result: {{operatorObject.result | async}}</div>
         </div>
     </div>

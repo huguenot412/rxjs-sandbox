@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { BehaviorSubject, from, fromEvent, interval, Observable, of, Subject, timer } from 'rxjs';
-import { concatMap, exhaustMap, map, mergeMap, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { EMPTY, fromEvent, interval, Observable, of } from 'rxjs';
+import { concatMap, exhaustMap, finalize, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 
 enum Operators {
   None = 'No operator selected',
@@ -13,6 +13,8 @@ enum Operators {
 interface InnerObservable {
   obs: Observable<number>;
   value: number;
+  hasActiveSubcription: boolean;
+  hasCompleted: boolean;
 }
 
 interface OperatorObj {
@@ -27,7 +29,7 @@ interface OperatorObj {
   templateUrl: './sandbox.component.html',
   styleUrls: ['./sandbox.component.scss']
 })
-export class SandboxComponent {
+export class SandboxComponent implements OnInit{
 
   @ViewChild('Source') Source: ElementRef;
   source$: Observable<Event>;
@@ -58,27 +60,44 @@ export class SandboxComponent {
       result: of(0)
     }
   ]
+
+  ngOnInit(): void {
+  }
   
-  ngAfterViewInit() {
+  ngAfterViewInit(): void {
     this.source$ = fromEvent(this.Source.nativeElement, 'click');
     this.operatorObjects.forEach(obj => this.applyOperator(obj));
   }
 
-  applyOperator(operatorObj): void {
+  setInnerObservable(): void {
+    
+  }
+
+  applyOperator(operatorObj: OperatorObj): void {
     operatorObj.result = this.source$.pipe(
       tap(() => {
         let val: number;
         let innerObj: InnerObservable;
-        const inner = interval(1000).pipe(tap(data => innerObj.value = data), take(10));
-        innerObj = {obs: inner, value: val};
+        const inner = interval(1000).pipe(tap(data => {
+          innerObj.value = data;
+          innerObj.hasActiveSubcription = true;
+        }), 
+        take(10),
+        finalize(() => innerObj.hasCompleted = true));
+        innerObj = {obs: inner, value: val, hasActiveSubcription: false, hasCompleted: false};
         operatorObj.innerObservables.push(innerObj);
       }),
-      operatorObj.operator(() => operatorObj.innerObservables[operatorObj.innerObservables.length - 1].obs)
+      operatorObj.operator(() => {
+        const innerObservables = operatorObj.innerObservables;
+        const observableIndex = innerObservables.length - 1;
+
+        return innerObservables[observableIndex].obs
+      })
     )
   }
 
   resetAll(): void {
-    this.operatorObjects.forEach(obj => this.applyOperator(obj));
     this.operatorObjects.map(obj => obj.innerObservables = []);
+    this.operatorObjects.forEach(obj => this.applyOperator(obj));
   }
 }
