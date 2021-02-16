@@ -17,14 +17,6 @@
             <input class="input" type="number" id="MappingModifier" [(ngModel)]="mappingModifier">
         </div>
     </div>
-    <div class="color-key">
-        <div class="key-entry">
-            <div class="color-dot subscribed"></div> Has active subscription
-        </div>
-        <div class="key-entry">
-            <div class="color-dot completed"></div> Subscription has completed
-        </div>
-    </div>
     <div class="results">
         <div *ngFor="let operatorObject of operatorObjects" class="results-card">
             <h2>{{ operatorObject.name }}</h2>
@@ -48,5 +40,13 @@
                 </div>
             </div>
         </div>
-    </div>   
+    </div> 
+    <div class="color-key">
+        <div class="key-entry">
+            <div class="color-dot subscribed"></div> Has active subscription
+        </div>
+        <div class="key-entry">
+            <div class="color-dot completed"></div> Subscription has completed
+        </div>
+    </div> 
 </div>
