@@ -83,7 +83,10 @@ export class SandboxComponent implements OnInit{
           innerObj.hasActiveSubcription = true;
         }), 
         take(10),
-        finalize(() => innerObj.hasCompleted = true));
+        finalize(() => {
+          innerObj.hasCompleted = true;
+          innerObj.hasActiveSubcription = false;
+        }));
         innerObj = {obs: inner, value: val, hasActiveSubcription: false, hasCompleted: false};
         operatorObj.innerObservables.push(innerObj);
       }),

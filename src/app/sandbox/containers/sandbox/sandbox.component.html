@@ -3,15 +3,14 @@
 </div>
 
 <div>
-    <h1>Active Operator: {{activeOperator}}</h1>
-    <div #Source>Call next on source</div>
-    <div (click)="resetAll()">Reset all</div>
+    <div #Source class="button">Call next on source</div>
+    <div (click)="resetAll()" class="button">Reset all</div>
     <div class="results">
         <div *ngFor="let operatorObject of operatorObjects" class="results-column">
             <h2>{{operatorObject.name}}</h2>
             <div *ngFor="let inner of operatorObject.innerObservables; let innerIndex = index"
-                [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted}">Inner {{innerIndex + 1}}: <span>{{inner.value}}</span></div>
-            <div>Result: {{operatorObject.result | async}}</div>
+                [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted && !inner.hasActiveSubcription}">Inner observable ({{innerIndex + 1}}): <span>{{inner.value}}</span></div>
+            <div>Outer observable: {{operatorObject.result | async}}</div>
         </div>
     </div>
 </div>

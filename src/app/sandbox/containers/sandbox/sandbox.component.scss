@@ -7,3 +7,24 @@
     background-color: red;
     color: white
 }
+
+.results {
+    display: grid;
+    grid-template-columns: repeat(2, 50%);
+}
+
+.button {
+    padding: .5rem;
+    margin-bottom: .5rem;
+    border-radius: .5rem;
+    display: inline-block;
+    border: 1px solid #333;
+    margin-right: .5rem;
+    cursor: pointer;
+    transition: .2s ease-in-out;
+
+    &:hover {
+        background-color: #ccc;
+    }
+}
+
