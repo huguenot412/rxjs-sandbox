@@ -8,7 +8,7 @@
     --gray-100: #F3F4F6;
     --white: #FFFFFF;
     --shadow-thin: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    --shadow-raised: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    --shadow-raised: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     font-family:Arial, Helvetica, sans-serif;
     box-sizing: border-box;
 }
@@ -39,20 +39,27 @@
 }
 
 .button {
-    padding: .5rem;
+  color: white;
+  border: 0;
+  outline: 0;
+  padding: .5rem 1rem;
+  box-shadow: 0px 5px 10px var(--shadow-thin);
+  transition: all .3s;
+  cursor: pointer;
+  margin-right: .5rem;
+
+  &:hover {
+    box-shadow: var(--shadow-raised);
+  }
+
+  &:active {
     box-shadow: var(--shadow-thin);
-    display: inline-block;
-    margin-right: .5rem;
-    cursor: pointer;
-    transition: .2s ease-in-out;
-    color: var(--white);
-    
-    
-    &:hover {
-        background-color: transparent;
-        color: var(--codeblock);
-        box-shadow: var(--shadow-raised);
-    }
+  }
+}
+
+.control-panel-buttons {
+    display: flex;
+    margin-right: 1rem;
 }
 
 .button-indigo {

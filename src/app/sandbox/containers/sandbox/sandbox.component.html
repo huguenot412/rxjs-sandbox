@@ -1,7 +1,9 @@
 <div class="sandbox">
     <div class="control-panel">
-        <div #Source class="button button-indigo">Call next on Outer</div>
-        <div (click)="resetAll()" class="button button-pink">Reset all</div>
+        <div class="control-panel-buttons">
+            <button #Source class="button button-indigo">Call next on Outer</button>
+            <button (click)="resetAll()" class="button button-pink">Reset all</button>
+        </div>
         <div class="input-group">
             <label class="label" for="IntervalTime">Interval time</label>
             <input class="input" type="number" id="IntervalTime" [(ngModel)]="intervalTime" min="500">
