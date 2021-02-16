@@ -1,26 +1,34 @@
-<div class="flex">
-
-</div>
-
 <div>
     <div class="control-panel">
         <div #Source class="button">Call next on Outer</div>
         <div (click)="resetAll()" class="button">Reset all</div>
+        <div class="input-group">
+            <label for="IntervalTime">Interval time</label>
+            <input class="input" type="number" id="IntervalTime" [(ngModel)]="intervalTime" min="500">
+        </div>
+        <div class="input-group">
+            <label for="IntervalAmount">Number of intervals</label>
+            <input class="input" type="number" id="IntervalAmount" [(ngModel)]="intervalAmount" min="1">
+        </div>
+        <div class="input-group">
+            <label for="MappingModifier">Mapping modifier</label>
+            <input class="input" type="number" id="MappingModifier" [(ngModel)]="mappingModifier">
+        </div>
     </div>
     <div class="color-key">
         <div class="key-entry">
             <div class="color-dot subscribed"></div> Has active subscription
         </div>
         <div class="key-entry">
-            <div class="color-dot completed"></div> Subscription has been canceled
+            <div class="color-dot completed"></div> Subscription has completed
         </div>
     </div>
     <div class="results">
         <div *ngFor="let operatorObject of operatorObjects" class="results-card">
             <h2>{{ operatorObject.name }}</h2>
-            <pre class="code">
-                <code>
-                    {{ operatorObject.code }}
+            <pre class="code-wrapper">
+                <code class="code">
+                    {{renderCode(operatorObject.name)}}
                 </code>
             </pre>
             <div class="observable-values">
@@ -29,7 +37,7 @@
                     <div *ngFor="let inner of operatorObject.innerObservables"
                         [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted && !inner.hasActiveSubcription}"
                         class="inner-observable">
-                        Inner observable: <span>{{inner.value}}</span>
+                        Inner Value: <span>{{inner.value}}</span>
                     </div>
                 </div>
                 <div class="result-observable">
@@ -38,6 +46,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    
+    </div>   
 </div>

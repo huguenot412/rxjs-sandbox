@@ -1,6 +1,6 @@
 :host {
     --subscribed: #10B981;
-    --canceled: #EF4444;
+    --completed: #EF4444;
     --codeblock: #374151;
     --white: #FFFFFF;
     --indigo: #6366F1;
@@ -15,7 +15,7 @@
 }
 
 .completed {
-    background-color: var(--canceled);
+    background-color: var(--completed);
     color: white
 }
 
@@ -36,7 +36,6 @@
 
 .button {
     padding: .5rem;
-    margin-bottom: .5rem;
     box-shadow: var(--shadow-thin);
     display: inline-block;
     margin-right: .5rem;
@@ -90,10 +89,15 @@
     font-weight: bold;
 }
 
-.code {
+.code-wrapper {
     padding: 1rem;
     background-color: var(--codeblock);
     color: var(--white);
+    overflow-x: scroll;
+}
+
+.code {
+    width: 100%;
 }
 
 .color-dot {
@@ -111,4 +115,17 @@
 .control-panel {
     display: flex;
     margin-bottom: 1rem;
+    align-items: flex-end;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-right: 1rem;
+}
+
+.input {
+    padding: .5rem;
+    border: none;
+    box-shadow: var(--shadow-thin);
 }

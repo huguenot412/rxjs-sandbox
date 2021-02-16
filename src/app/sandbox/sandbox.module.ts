@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SandboxComponent } from './containers/sandbox/sandbox.component';
 import { SandboxRoutingModule } from './sandbox-routding.module';
 
@@ -9,7 +10,8 @@ import { SandboxRoutingModule } from './sandbox-routding.module';
   declarations: [SandboxComponent],
   imports: [
     CommonModule,
-    SandboxRoutingModule
+    SandboxRoutingModule,
+    FormsModule
   ]
 })
 export class SandboxModule { }
