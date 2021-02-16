@@ -3,12 +3,22 @@
 </div>
 
 <div>
-    <div #Source class="button">Call next on source</div>
-    <div (click)="resetAll()" class="button">Reset all</div>
+    <div class="control-panel">
+        <div #Source class="button">Call next on Outer</div>
+        <div (click)="resetAll()" class="button">Reset all</div>
+    </div>
+    <div class="color-key">
+        <div class="key-entry">
+            <div class="color-dot subscribed"></div> Has active subscription
+        </div>
+        <div class="key-entry">
+            <div class="color-dot completed"></div> Subscription has been canceled
+        </div>
+    </div>
     <div class="results">
         <div *ngFor="let operatorObject of operatorObjects" class="results-card">
             <h2>{{ operatorObject.name }}</h2>
-            <pre>
+            <pre class="code">
                 <code>
                     {{ operatorObject.code }}
                 </code>
@@ -29,4 +39,5 @@
             </div>
         </div>
     </div>
+    
 </div>

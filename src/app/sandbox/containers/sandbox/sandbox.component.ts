@@ -41,60 +41,60 @@ export class SandboxComponent implements OnInit{
       innerObservables: [],
       operator: mergeMap,
       result: of(0),
-      code: `
+      code:
+`
 resultObservable$ = outerObservable.pipe(
   mergeMap(() => innerObservable$.pipe(
     map((innerObservableValue) => {
       return innerObservableValue * 10;
     })
   ))
-).subscribe();
-      `
+).subscribe();`
     },
     {
       name: Operators.ConcatMap,
       innerObservables: [],
       operator: concatMap,
       result: of(0),
-      code: `
+      code:
+`
 resultObservable$ = outerObservable.pipe(
   concatMap(() => innerObservable$.pipe(
     map((innerObservableValue) => {
       return innerObservableValue * 10;
     })
   ))
-).subscribe();
-      `
+).subscribe();`
     },
     {
       name: Operators.SwitchMap,
       innerObservables: [],
       operator: switchMap,
       result: of(0),
-      code: `
+      code:
+`
 resultObservable$ = outerObservable.pipe(
   switchMap(() => innerObservable$.pipe(
     map((innerObservableValue) => {
       return innerObservableValue * 10;
     })
   ))
-).subscribe();
-      `
+).subscribe();`
     },
     {
       name: Operators.ExhaustMap,
       innerObservables: [],
       operator: exhaustMap,
       result: of(0),
-      code: `
+      code:
+`
 resultObservable$ = outerObservable.pipe(
   exhuastMap(() => innerObservable$.pipe(
     map((innerObservableValue) => {
       return innerObservableValue * 10;
     })
   ))
-).subscribe();
-      `
+).subscribe();`
     }
   ]
 
