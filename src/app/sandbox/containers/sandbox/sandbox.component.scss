@@ -1,10 +1,14 @@
 :host {
     --subscribed: #10B981;
     --completed: #EF4444;
+    --indigo-500: #6366F1;
+    --pink-500: #EC4899;
+    --blue-500: #3B82F6;
     --codeblock: #374151;
+    --gray-100: #F3F4F6;
     --white: #FFFFFF;
-    --indigo: #6366F1;
     --shadow-thin: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    --shadow-raised: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     font-family:Arial, Helvetica, sans-serif;
     box-sizing: border-box;
 }
@@ -41,11 +45,22 @@
     margin-right: .5rem;
     cursor: pointer;
     transition: .2s ease-in-out;
-
+    color: var(--white);
+    
+    
     &:hover {
-        background-color: var(--indigo);
-        color: var(--white);
+        background-color: transparent;
+        color: var(--codeblock);
+        box-shadow: var(--shadow-raised);
     }
+}
+
+.button-indigo {
+    background-color: var(--indigo-500);
+}
+
+.button-pink {
+    background-color: var(--pink-500);
 }
 
 .observable-values {
@@ -76,13 +91,25 @@
 .inner-observables {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    margin-right: .5rem;
+    flex: 1 1 auto;
+    justify-content: flex-start;
 }
 
 .inner-observable {
     padding: .5rem;
     margin-bottom: .5rem;
     box-shadow: var(--shadow-thin);
+    display: flex;
+}
+
+.inner-label {
+    flex: 0 0 auto;
+}
+
+.inner-value {
+    flex: 1 1 auto;
+    text-align: center;
 }
 
 .sub-header {
@@ -100,6 +127,10 @@
     width: 100%;
 }
 
+.color-key {
+    padding: 1rem;
+}
+
 .color-dot {
     height: 1rem;
     width: 1rem;
@@ -109,13 +140,19 @@
 
 .key-entry {
     display: flex;
-    margin-bottom: .5rem;
+
+    &:not(:last-child) {
+        margin-bottom: .5rem;
+    }
 }
 
 .control-panel {
     display: flex;
     margin-bottom: 1rem;
     align-items: flex-end;
+    padding: 1rem;
+    margin: 1rem;
+    box-shadow: var(--shadow-thin);
 }
 
 .input-group {
@@ -128,4 +165,8 @@
     padding: .5rem;
     border: none;
     box-shadow: var(--shadow-thin);
+}
+
+.label {
+    margin-bottom: .5rem;
 }

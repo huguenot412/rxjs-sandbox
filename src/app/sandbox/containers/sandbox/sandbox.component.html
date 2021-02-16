@@ -1,17 +1,17 @@
-<div>
+<div class="sandbox">
     <div class="control-panel">
-        <div #Source class="button">Call next on Outer</div>
-        <div (click)="resetAll()" class="button">Reset all</div>
+        <div #Source class="button button-indigo">Call next on Outer</div>
+        <div (click)="resetAll()" class="button button-pink">Reset all</div>
         <div class="input-group">
-            <label for="IntervalTime">Interval time</label>
+            <label class="label" for="IntervalTime">Interval time</label>
             <input class="input" type="number" id="IntervalTime" [(ngModel)]="intervalTime" min="500">
         </div>
         <div class="input-group">
-            <label for="IntervalAmount">Number of intervals</label>
+            <label class="label" for="IntervalAmount">Number of intervals</label>
             <input class="input" type="number" id="IntervalAmount" [(ngModel)]="intervalAmount" min="1">
         </div>
         <div class="input-group">
-            <label for="MappingModifier">Mapping modifier</label>
+            <label class="label" for="MappingModifier">Mapping modifier</label>
             <input class="input" type="number" id="MappingModifier" [(ngModel)]="mappingModifier">
         </div>
     </div>
@@ -37,7 +37,7 @@
                     <div *ngFor="let inner of operatorObject.innerObservables"
                         [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted && !inner.hasActiveSubcription}"
                         class="inner-observable">
-                        Inner Value: <span>{{inner.value}}</span>
+                        <span class="inner-label">Inner Value:</span> <span class="inner-value">{{inner.value}}</span>
                     </div>
                 </div>
                 <div class="result-observable">
