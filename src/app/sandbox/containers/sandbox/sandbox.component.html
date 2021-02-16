@@ -1,0 +1,16 @@
+<div class="flex">
+    <p>code goes here</p>
+</div>
+
+<div>
+    <h1>Active Operator: {{activeOperator}}</h1>
+    <div #Source>Call next on source</div>
+    <div (click)="resetAll()">Reset all</div>
+    <div class="results">
+        <div *ngFor="let operatorObject of operatorObjects" class="results-column">
+            <h2>{{operatorObject.name}}</h2>
+            <div *ngFor="let inner of operatorObject.innerObservables">Inner: <span>{{inner.value}}</span></div>
+            <div>Result: {{operatorObject.result | async}}</div>
+        </div>
+    </div>
+</div>
