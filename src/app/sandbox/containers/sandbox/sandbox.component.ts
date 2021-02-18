@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { BehaviorSubject, fromEvent, interval, Observable, of } from 'rxjs';
-import { concatMap, exhaustMap, finalize, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { concatMap, exhaustMap, filter, finalize, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 
 enum Operators {
   None = 'No operator selected',
@@ -19,9 +19,10 @@ interface InnerObservable {
 }
 
 interface OperatorObject {
-  name: string;
+  name: Operators;
   innerObservables: InnerObservable[];
   result: Observable<number>;
+  isVisible: boolean;
   operator: Function;
 }
 
@@ -44,31 +45,37 @@ export class SandboxComponent {
       name: Operators.MergeMap,
       innerObservables: [],
       operator: mergeMap,
-      result: of(0)
+      result: of(0),
+      isVisible: true
     },
     {
       name: Operators.ConcatMap,
       innerObservables: [],
       operator: concatMap,
-      result: of(0)
+      result: of(0),
+      isVisible: false
     },
     {
       name: Operators.SwitchMap,
       innerObservables: [],
       operator: switchMap,
-      result: of(0)
+      result: of(0),
+      isVisible: false
     },
     {
       name: Operators.ExhaustMap,
       innerObservables: [],
       operator: exhaustMap,
-      result: of(0)
+      result: of(0),
+      isVisible: false
     }
   ]
 
+  visibleOperators = this.operatorObjects.filter(op => op.isVisible);
+
   ngAfterViewInit(): void {
     this.source$ = fromEvent(this.Source.nativeElement, 'click');
-    this.operatorObjects.forEach(obj => this.applyOperator(obj, this.useSubjects));
+    this.resetAll();
   }
 
   renderCode(operatorName: string): string {
@@ -80,6 +87,16 @@ export class SandboxComponent {
         })
       ))
     ).subscribe();`
+  }
+
+  setInnerObservableType(): void {
+    this.useSubjects = !this.useSubjects;
+    this.resetAll();
+  }
+
+  toggleOperator(operator: OperatorObject) {
+    operator.isVisible = !operator.isVisible;
+    this.visibleOperators = this.operatorObjects.filter(op => op.isVisible);
   }
 
   applyOperator(operatorObject: OperatorObject, isSubject: boolean): void {

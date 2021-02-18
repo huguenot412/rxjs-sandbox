@@ -3,46 +3,58 @@
         <div class="control-panel-buttons">
             <button #Source class="button button-indigo">Call next on Outer</button>
             <button (click)="resetAll()" class="button button-pink">Reset all</button>
+            <button (click)="setInnerObservableType()" class="button button-pink">Use {{ useSubjects ? "Intervals" : "Subjects"}}</button>
         </div>
-        <div class="input-group">
-            <label class="label" for="IntervalTime">Interval time</label>
-            <input class="input" type="number" id="IntervalTime" [(ngModel)]="intervalTime" min="500">
+        <div class="control-panel-operators">
+            <button *ngFor="let operator of operatorObjects" 
+                (click)="toggleOperator(operator)" 
+                class="button"
+                [ngClass]="{'button-green': operator.isVisible}">{{operator.name}} 
+            </button>
         </div>
-        <div class="input-group">
-            <label class="label" for="IntervalAmount">Number of intervals</label>
-            <input class="input" type="number" id="IntervalAmount" [(ngModel)]="intervalAmount" min="1">
-        </div>
-        <div class="input-group">
-            <label class="label" for="MappingModifier">Mapping modifier</label>
-            <input class="input" type="number" id="MappingModifier" [(ngModel)]="mappingModifier">
+        <div class="control-panel-inputs">
+            <div class="input-group">
+                <label class="label" for="IntervalTime">Interval time</label>
+                <input class="input" type="number" id="IntervalTime" [(ngModel)]="intervalTime" min="500">
+            </div>
+            <div class="input-group">
+                <label class="label" for="IntervalAmount">Number of intervals</label>
+                <input class="input" type="number" id="IntervalAmount" [(ngModel)]="intervalAmount" min="1">
+            </div>
+            <div class="input-group">
+                <label class="label" for="MappingModifier">Mapping modifier</label>
+                <input class="input" type="number" id="MappingModifier" [(ngModel)]="mappingModifier">
+            </div>
         </div>
     </div>
     <div class="results">
-        <div *ngFor="let operatorObject of operatorObjects" class="results-card">
-            <h2>{{ operatorObject.name }}</h2>
-            <pre class="code-wrapper">
-                <code class="code">
-                    {{renderCode(operatorObject.name)}}
-                </code>
-            </pre>
-            <div class="observable-values">
-                <div class="inner-observables">
-                    <p class="sub-header">Inner Values:</p>
-                    <div *ngFor="let inner of operatorObject.innerObservables"
-                        [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted && !inner.hasActiveSubcription}"
-                        class="inner-observable">
-                        <span class="inner-label">Inner Value:</span> 
-                        <span *ngIf="inner.subject" (click)="inner.subject.next(inner.value + 1)">next()</span>
-                        <span *ngIf="inner.subject" (click)="inner.subject.complete()">complete()</span>
-                        <span class="inner-value">{{inner.value}}</span>                       
+        <ng-container *ngIf="visibleOperators">
+            <div *ngFor="let operatorObject of visibleOperators" class="results-card">
+                <h2>{{ operatorObject.name }}</h2>
+                <pre class="code-wrapper">
+                    <code class="code">
+                        {{renderCode(operatorObject.name)}}
+                    </code>
+                </pre>
+                <div class="observable-values">
+                    <div class="inner-observables">
+                        <p class="sub-header">Inner Values ({{useSubjects ? "Subjects" : "Intervals"}}):</p>
+                        <div *ngFor="let inner of operatorObject.innerObservables"
+                            [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted && !inner.hasActiveSubcription}"
+                            class="inner-observable">
+                            <span class="inner-label">{{useSubjects ? "Subject" : "Interval"}}:</span> 
+                            <span *ngIf="inner.subject && inner.hasActiveSubcription" (click)="inner.subject.next(inner.value + 1)" class="button button-sm">next()</span>
+                            <span *ngIf="inner.subject && inner.hasActiveSubcription" (click)="inner.subject.complete()" class="button button-sm">complete()</span>
+                            <span class="inner-value">{{inner.value}}</span>                       
+                        </div>
+                    </div>
+                    <div class="result-observable">
+                        <p class="sub-header">Result Value:</p>
+                        <div class="result"><span>{{ operatorObject.result | async }}</span></div>
                     </div>
                 </div>
-                <div class="result-observable">
-                    <p class="sub-header">Result Value:</p>
-                    <div class="result"><span>{{ operatorObject.result | async }}</span></div>
-                </div>
             </div>
-        </div>
+        </ng-container>
     </div> 
     <div class="color-key">
         <div class="key-entry">

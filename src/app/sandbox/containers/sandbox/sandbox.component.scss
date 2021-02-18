@@ -10,40 +10,49 @@
     --shadow-thin: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     --shadow-raised: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     font-family:Arial, Helvetica, sans-serif;
-    box-sizing: border-box;
+    
 }
 
 .subscribed {
     background-color: var(--subscribed);
-    color: white
+    color: var(--white);
 }
 
 .completed {
     background-color: var(--completed);
-    color: white
+    color: var(--white);
+}
+
+.sandbox {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 .results {
     display: grid;
-    grid-template-columns: repeat(4, 25%);
-    padding: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(25rem, 100%), 1fr));
+    gap: 1rem;
+    box-sizing: border-box;
 }
 
 .results-card {
     padding: 1rem;
     box-shadow: var(--shadow-thin);
-    margin: 1rem;
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .button {
-  color: white;
+  color: var(--codeblock);
+  background-color: var(--white);
   border: 0;
   outline: 0;
   padding: .5rem 1rem;
-  box-shadow: 0px 5px 10px var(--shadow-thin);
+  box-shadow: var(--shadow-thin);
   transition: all .3s;
   cursor: pointer;
   margin-right: .5rem;
@@ -57,6 +66,11 @@
   }
 }
 
+.button-sm {
+    padding: .25rem;
+    margin: 0 0 0 .5rem;
+}
+
 .control-panel-buttons {
     display: flex;
     margin-right: 1rem;
@@ -64,10 +78,17 @@
 
 .button-indigo {
     background-color: var(--indigo-500);
+    color: var(--white);
 }
 
 .button-pink {
     background-color: var(--pink-500);
+    color: var(--white);
+}
+
+.button-green {
+    background-color: var(--subscribed);
+    color: var(--white);
 }
 
 .observable-values {
@@ -108,6 +129,8 @@
     margin-bottom: .5rem;
     box-shadow: var(--shadow-thin);
     display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .inner-label {
@@ -117,6 +140,7 @@
 .inner-value {
     flex: 1 1 auto;
     text-align: center;
+    padding: 0 .5rem;
 }
 
 .sub-header {
@@ -160,18 +184,35 @@
     padding: 1rem;
     margin: 1rem;
     box-shadow: var(--shadow-thin);
+    flex-wrap: wrap;
+}
+
+.control-panel-buttons,
+.control-panel-operators,
+.control-panel-inputs {
+    display: flex;
+    padding: .25rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .button,
+    .input-group {
+        margin: .25rem .5rem .25rem 0;
+    }
 }
 
 .input-group {
     display: flex;
     flex-direction: column;
     margin-right: 1rem;
+    width: 10rem;
 }
 
 .input {
     padding: .5rem;
     border: none;
     box-shadow: var(--shadow-thin);
+    flex: 1 1 auto;
 }
 
 .label {
