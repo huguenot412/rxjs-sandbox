@@ -31,7 +31,10 @@
                     <div *ngFor="let inner of operatorObject.innerObservables"
                         [ngClass]="{'subscribed': inner.hasActiveSubcription, 'completed': inner.hasCompleted && !inner.hasActiveSubcription}"
                         class="inner-observable">
-                        <span class="inner-label">Inner Value:</span> <span class="inner-value">{{inner.value}}</span>
+                        <span class="inner-label">Inner Value:</span> 
+                        <span *ngIf="inner.subject" (click)="inner.subject.next(inner.value + 1)">next()</span>
+                        <span *ngIf="inner.subject" (click)="inner.subject.complete()">complete()</span>
+                        <span class="inner-value">{{inner.value}}</span>                       
                     </div>
                 </div>
                 <div class="result-observable">

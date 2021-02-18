@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { fromEvent, interval, Observable, of } from 'rxjs';
+import { BehaviorSubject, fromEvent, interval, Observable, of } from 'rxjs';
 import { concatMap, exhaustMap, finalize, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 
 enum Operators {
@@ -11,7 +11,8 @@ enum Operators {
 }
 
 interface InnerObservable {
-  obs: Observable<number>;
+  observable: Observable<number>;
+  subject?: BehaviorSubject<number>;
   value: number;
   hasActiveSubcription: boolean;
   hasCompleted: boolean;
@@ -37,6 +38,7 @@ export class SandboxComponent {
   intervalTime = 1000;
   intervalAmount = 10;
   mappingModifier = 10;
+  useSubjects = false;
   operatorObjects: OperatorObject[] = [
     {
       name: Operators.MergeMap,
@@ -66,12 +68,12 @@ export class SandboxComponent {
 
   ngAfterViewInit(): void {
     this.source$ = fromEvent(this.Source.nativeElement, 'click');
-    this.operatorObjects.forEach(obj => this.applyOperator(obj));
+    this.operatorObjects.forEach(obj => this.applyOperator(obj, this.useSubjects));
   }
 
   renderCode(operatorName: string): string {
     return `
-    resultObservable$ = outerObservable.pipe(
+    resultObservable$ = outerObservable$.pipe(
       ${operatorName}(() => innerObservable$.pipe(
         map((innerObservableValue) => {
           return innerObservableValue * ${this.mappingModifier};
@@ -80,34 +82,60 @@ export class SandboxComponent {
     ).subscribe();`
   }
 
-  applyOperator(operatorObject: OperatorObject): void {
+  applyOperator(operatorObject: OperatorObject, isSubject: boolean): void {
     operatorObject.result = this.source$.pipe(
       tap(() => {
-        let val: number;
-        let innerObservable: InnerObservable;
-        const inner = interval(this.intervalTime).pipe(tap(data => {
-          innerObservable.value = data;
-          innerObservable.hasActiveSubcription = true;
-        }), 
-        take(this.intervalAmount),
-        finalize(() => {
-          innerObservable.hasCompleted = true;
-          innerObservable.hasActiveSubcription = false;
-        }));
-        innerObservable = {obs: inner, value: val, hasActiveSubcription: false, hasCompleted: false};
-        operatorObject.innerObservables.push(innerObservable);
+        if(isSubject) {
+          this._createSubjectInnerObservable(operatorObject);
+        } else {
+          this._createIntervalInnerObservable(operatorObject);
+        }
       }),
       operatorObject.operator(() => {
         const innerObservables = operatorObject.innerObservables;
         const observableIndex = innerObservables.length - 1;
 
-        return innerObservables[observableIndex].obs.pipe(map(number => number * this.mappingModifier));
+        return innerObservables[observableIndex].observable.pipe(map(number => number * this.mappingModifier));
       })
     )
   }
 
   resetAll(): void {
     this.operatorObjects.map(obj => obj.innerObservables = []);
-    this.operatorObjects.forEach(obj => this.applyOperator(obj));
+    this.operatorObjects.forEach(obj => this.applyOperator(obj, this.useSubjects));
+  }
+
+  private _createSubjectInnerObservable(outerObservable: OperatorObject): void {
+    let value: number;
+    let innerObservable: InnerObservable;
+    const innerSubject$ = new BehaviorSubject(0);
+    const inner$ = innerSubject$.asObservable().pipe(tap(data => {
+      innerObservable.value = data;
+      innerObservable.hasActiveSubcription = true;
+      console.log(data);
+    }), 
+    finalize(() => {
+      innerObservable.hasCompleted = true;
+      innerObservable.hasActiveSubcription = false;
+    }));
+    innerObservable = {observable: inner$, subject: innerSubject$, value, hasActiveSubcription: false, hasCompleted: false};
+    outerObservable.innerObservables.push(innerObservable);
+  }
+
+  private _createIntervalInnerObservable(outerObservable: OperatorObject): void {
+    let value: number;
+    let innerObservable: InnerObservable;
+    const inner = interval(this.intervalTime).pipe(tap(data => {
+      innerObservable.value = data;
+      innerObservable.hasActiveSubcription = true;
+    }), 
+    take(this.intervalAmount),
+    finalize(() => {
+      innerObservable.hasCompleted = true;
+      innerObservable.hasActiveSubcription = false;
+    }));
+    innerObservable = {observable: inner, value, hasActiveSubcription: false, hasCompleted: false};
+    outerObservable.innerObservables.push(innerObservable);
+
   }
 }
