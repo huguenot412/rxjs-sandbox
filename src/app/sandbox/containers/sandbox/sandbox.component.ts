@@ -95,6 +95,10 @@ export class SandboxComponent {
   }
 
   toggleOperator(operator: OperatorObject) {
+    if( this.visibleOperators.length <= 1 
+      && !this.visibleOperators.findIndex((op => op.name === operator.name))) {
+      return;
+    }
     operator.isVisible = !operator.isVisible;
     this.visibleOperators = this.operatorObjects.filter(op => op.isVisible);
   }

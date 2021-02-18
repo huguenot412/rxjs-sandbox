@@ -34,6 +34,7 @@
     grid-template-columns: repeat(auto-fill, minmax(min(25rem, 100%), 1fr));
     gap: 1rem;
     box-sizing: border-box;
+    padding: 1rem;
 }
 
 .results-card {
@@ -67,7 +68,7 @@
 }
 
 .button-sm {
-    padding: .25rem;
+    padding: .1rem .25rem;
     margin: 0 0 0 .5rem;
 }
 
