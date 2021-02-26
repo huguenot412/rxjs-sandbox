@@ -26,10 +26,6 @@
                 <label class="label" for="IntervalAmount">Number of intervals</label>
                 <input class="input" type="number" id="IntervalAmount" [(ngModel)]="intervalAmount" min="1">
             </div>
-            <div class="input-group">
-                <label class="label" for="MappingModifier">Mapping modifier</label>
-                <input class="input" type="number" id="MappingModifier" [(ngModel)]="mappingModifier">
-            </div>
         </div>
     </div>
     <div class="results">
@@ -37,7 +33,7 @@
             <div *ngFor="let operatorObject of visibleOperators" class="results-card">
                 <h2>{{ operatorObject.name }}</h2>
                 <p *ngIf="showDefinition" class="description">{{operatorObject.definition}}</p>
-                <img *ngIf="showMarble" [src]="'../assets/images/' + operatorObject.name + '.png'">
+                <img *ngIf="showMarble" [src]="'../assets/images/' + operatorObject.name + '.png'" class="marble-img">
                 <pre *ngIf="showCode" class="code-wrapper">
                     <code class="code">
                         {{renderCode(operatorObject.name)}}
@@ -56,10 +52,10 @@
                         </div>
                     </div>
                    <div>
-                        <!-- <div class="result-observable">
+                        <div class="result-observable">
                             <p class="sub-header">Outer Value:</p>
-                            <div class="result"><span>{{ outerEventCount$ | async }}</span></div>
-                        </div> -->
+                            <div class="result"><span>{{ outerObservableCount$ | async }}</span></div>
+                        </div>
                         <div class="result-observable">
                             <p class="sub-header">Result Value:</p>
                             <div class="result"><span>{{ operatorObject.result | async }}</span></div>

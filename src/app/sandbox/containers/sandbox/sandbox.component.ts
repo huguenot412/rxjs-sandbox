@@ -37,7 +37,7 @@ export class SandboxComponent {
   @ViewChild('OuterEvent') Source: ElementRef;
   outerEvent$: Observable<Event>;
   ones$: Observable<number>;
-  outerEventCount$: Observable<number>;
+  outerObservableCount$: Observable<number>;
   activeOperator = Operators.None;
   intervalTime = 800;
   intervalAmount = 10;
@@ -46,7 +46,6 @@ export class SandboxComponent {
   showCode = false;
   showMarble = false;
   showDefinition = true;
-  outerCount: Subscription;
   operatorObjects: OperatorObject[] = [
     {
       name: Operators.MergeMap,
@@ -87,20 +86,16 @@ export class SandboxComponent {
   ngAfterViewInit(): void {
     this.outerEvent$ = fromEvent(this.Source.nativeElement, 'click');
     this.ones$ = this.outerEvent$.pipe(mapTo(1));
-    this.outerEventCount$ = this.ones$.pipe(scan((acc, one) => acc + one, 0));
-    this.outerCount = this.outerEventCount$.subscribe();
+    this.outerObservableCount$ = this.ones$.pipe(scan((acc, one) => acc + one, 0));
     this.resetAll();
   }
 
   renderCode(operatorName: string): string {
     return `
     resultObservable$ = outerObservable$.pipe(
-      ${operatorName}(() => innerObservable$.pipe(
-        map((innerObservableValue) => {
-          return innerObservableValue * ${this.mappingModifier};
-        })
-      ))
-    ).subscribe();`
+      ${operatorName}((outerObservableValue) => {
+        innerObservable$
+      }).subscribe();`
   }
 
   setInnerObservableType(): void {
@@ -119,7 +114,7 @@ export class SandboxComponent {
 
   applyOperator(operatorObject: OperatorObject): void {
 
-    operatorObject.result = this.outerEventCount$.pipe(
+    operatorObject.result = this.outerObservableCount$.pipe(
       tap(() => {
         if(this.useSubjects) {
           this._createSubjectInnerObservable(operatorObject);
@@ -127,16 +122,17 @@ export class SandboxComponent {
           this._createIntervalInnerObservable(operatorObject);
         }
       }),
-      operatorObject.operator(() => {
+      operatorObject.operator((outerObservableCount) => {
         const innerObservables = operatorObject.innerObservables;
         const observableIndex = innerObservables.length - 1;
 
-        return innerObservables[observableIndex].observable.pipe(map(number => number * this.mappingModifier));
+        return innerObservables[observableIndex].observable.pipe(map(number => number * outerObservableCount));
       })
     )
   }
 
   resetAll(): void {
+    this.outerObservableCount$ = this.ones$.pipe(scan((acc, one) => acc + one, 0));
     this.operatorObjects.map(obj => obj.innerObservables = []);
     this.operatorObjects.forEach(obj => this.applyOperator(obj));
   }
@@ -172,9 +168,5 @@ export class SandboxComponent {
     innerObservable = {observable: inner, value, hasActiveSubcription: false, hasCompleted: false};
     outerObservable.innerObservables.push(innerObservable);
 
-  }
-
-  ngOnDestroy(): void {
-    this.outerCount.unsubscribe();
   }
 }
