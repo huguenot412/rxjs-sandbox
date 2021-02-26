@@ -1,6 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { BehaviorSubject, fromEvent, interval, Observable, of } from 'rxjs';
-import { concatMap, exhaustMap, filter, finalize, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, fromEvent, interval, Observable, of, Subscription } from 'rxjs';
+import { concatMap, exhaustMap, filter, finalize, map, mapTo, mergeMap, scan, switchMap, take, tap } from 'rxjs/operators';
 
 enum Operators {
   None = 'No operator selected',
@@ -23,6 +23,7 @@ interface OperatorObject {
   innerObservables: InnerObservable[];
   result: Observable<number>;
   isVisible: boolean;
+  definition: string;
   operator: Function;
 }
 
@@ -33,48 +34,61 @@ interface OperatorObject {
 })
 export class SandboxComponent {
 
-  @ViewChild('Source') Source: ElementRef;
-  source$: Observable<Event>;
+  @ViewChild('OuterEvent') Source: ElementRef;
+  outerEvent$: Observable<Event>;
+  ones$: Observable<number>;
+  outerEventCount$: Observable<number>;
   activeOperator = Operators.None;
-  intervalTime = 1000;
+  intervalTime = 800;
   intervalAmount = 10;
   mappingModifier = 10;
   useSubjects = false;
+  showCode = false;
+  showMarble = false;
+  showDefinition = true;
+  outerCount: Subscription;
   operatorObjects: OperatorObject[] = [
     {
       name: Operators.MergeMap,
       innerObservables: [],
       operator: mergeMap,
       result: of(0),
-      isVisible: true
+      isVisible: true,
+      definition: "Projects each source value to an Observable which is merged in the output Observable."
     },
     {
       name: Operators.ConcatMap,
       innerObservables: [],
       operator: concatMap,
       result: of(0),
-      isVisible: false
+      isVisible: false,
+      definition: 'Projects each source value to an Observable which is merged in the output Observable, in a serialized fashion waiting for each one to complete before merging the next.'
     },
     {
       name: Operators.SwitchMap,
       innerObservables: [],
       operator: switchMap,
       result: of(0),
-      isVisible: false
+      isVisible: false,
+      definition: 'Projects each source value to an Observable which is merged in the output Observable, emitting values only from the most recently projected Observable.'
     },
     {
       name: Operators.ExhaustMap,
       innerObservables: [],
       operator: exhaustMap,
       result: of(0),
-      isVisible: false
+      isVisible: false,
+      definition: 'Projects each source value to an Observable which is merged in the output Observable only if the previous projected Observable has completed.'
     }
   ]
 
   visibleOperators = this.operatorObjects.filter(op => op.isVisible);
 
   ngAfterViewInit(): void {
-    this.source$ = fromEvent(this.Source.nativeElement, 'click');
+    this.outerEvent$ = fromEvent(this.Source.nativeElement, 'click');
+    this.ones$ = this.outerEvent$.pipe(mapTo(1));
+    this.outerEventCount$ = this.ones$.pipe(scan((acc, one) => acc + one, 0));
+    this.outerCount = this.outerEventCount$.subscribe();
     this.resetAll();
   }
 
@@ -103,10 +117,11 @@ export class SandboxComponent {
     this.visibleOperators = this.operatorObjects.filter(op => op.isVisible);
   }
 
-  applyOperator(operatorObject: OperatorObject, isSubject: boolean): void {
-    operatorObject.result = this.source$.pipe(
+  applyOperator(operatorObject: OperatorObject): void {
+
+    operatorObject.result = this.outerEventCount$.pipe(
       tap(() => {
-        if(isSubject) {
+        if(this.useSubjects) {
           this._createSubjectInnerObservable(operatorObject);
         } else {
           this._createIntervalInnerObservable(operatorObject);
@@ -123,7 +138,7 @@ export class SandboxComponent {
 
   resetAll(): void {
     this.operatorObjects.map(obj => obj.innerObservables = []);
-    this.operatorObjects.forEach(obj => this.applyOperator(obj, this.useSubjects));
+    this.operatorObjects.forEach(obj => this.applyOperator(obj));
   }
 
   private _createSubjectInnerObservable(outerObservable: OperatorObject): void {
@@ -133,7 +148,6 @@ export class SandboxComponent {
     const inner$ = innerSubject$.asObservable().pipe(tap(data => {
       innerObservable.value = data;
       innerObservable.hasActiveSubcription = true;
-      console.log(data);
     }), 
     finalize(() => {
       innerObservable.hasCompleted = true;
@@ -158,5 +172,9 @@ export class SandboxComponent {
     innerObservable = {observable: inner, value, hasActiveSubcription: false, hasCompleted: false};
     outerObservable.innerObservables.push(innerObservable);
 
+  }
+
+  ngOnDestroy(): void {
+    this.outerCount.unsubscribe();
   }
 }

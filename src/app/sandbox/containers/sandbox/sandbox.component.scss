@@ -13,9 +13,19 @@
     
 }
 
+.hidden {
+    visibility: hidden;
+}
+
 .subscribed {
     background-color: var(--subscribed);
     color: var(--white);
+}
+
+.description {
+    height: 8rem;
+    display: flex;
+    align-items: center;
 }
 
 .completed {
