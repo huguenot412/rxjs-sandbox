@@ -94,7 +94,11 @@ export class SandboxComponent {
     return `
     resultObservable$ = outerObservable$.pipe(
       ${operatorName}((outerObservableValue) => {
-        innerObservable$
+        innerObservable$.pipe(
+          map((innerObservableValue) => {
+            return outerObservableValue * innerObservableValue;
+          })
+        )
       }).subscribe();`
   }
 
